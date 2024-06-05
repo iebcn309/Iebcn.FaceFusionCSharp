@@ -80,10 +80,10 @@ public class VideoProcessor
                     else
                     {
           
-                        var reference_face_distance =Common.CosineSimilarity(face1.ToArray(), mbedding.ToArray());
+                        var reference_face_distance = Common.CosineSimilarity(face1.ToArray(), mbedding.ToArray());
 
                         Console.WriteLine($"相似度：{reference_face_distance}");
-                        if (reference_face_distance < TempFileManager.Globals.ReferenceFaceDistance)
+                        if ((decimal)reference_face_distance < TempFileManager.Globals.ReferenceFaceDistance)
                         {
                             Mat mat_ = faceSwapper.Detect(frame, mbeddingSource , faceLandmarks);
                             frame = faceEnhancer.EnhanceFace(mat_, faceLandmarks);

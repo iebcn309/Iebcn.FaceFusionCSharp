@@ -1,6 +1,7 @@
 ﻿using OpenCvSharp;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Microsoft.ML.OnnxRuntime;
+using Iebcn.FaceFusion.Utility;
 
 namespace Iebcn.FaceFusion;
 public class YoloFace : Processor, IFaceAnalyser
@@ -44,7 +45,7 @@ public class YoloFace : Processor, IFaceAnalyser
         for (int i = 0; i < num_box; i++)
         {
             float score = pdata[4 * num_box + i];
-            if (score > TempFileManager.Globals.FaceDetectorScore)
+            if (score.ObjectToDecimal() > TempFileManager.Globals.FaceDetectorScore)
             {
                 float xmin = (float)(((double)pdata[i] - 0.5 * (double)pdata[2 * num_box + i]) * (double)ratioWidth);//(cx,cy,w,h)转到(x,y,w,h)并还原到原图
                 float ymin = (float)(((double)pdata[num_box + i] - 0.5 * (double)pdata[3 * num_box + i]) * (double)ratioHeight);
@@ -56,7 +57,7 @@ public class YoloFace : Processor, IFaceAnalyser
                 //剩下的5个关键点坐标的计算,暂时不写,因为在下游的模块里没有用到5个关键点坐标信息
             }
         }
-        float iouThreshold = TempFileManager.Globals.FaceDetectorModel == FaceDetectorModel.many ? 0.1f : 0.4f;
+        float iouThreshold = TempFileManager.Globals.FaceDetectorModel == "many" ? 0.1f : 0.4f;
         List<int> keep_inds = Common.nms(bounding_box_raw, score_raw, iouThreshold);
         int keep_num = keep_inds.Count();
         var result = new FaceDetectResult();
